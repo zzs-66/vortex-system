@@ -131,7 +131,7 @@
         <!-- 法律声明 -->
         <div class="legal-disclaimer">
             <h3>▲ SECURITY NOTICE ▲</h3>
-            <p>本系统自动收集设备元数据用于网络安全研究，数据将加密存储于欧盟区服务器，24小时后自动销毁</p>
+            <p>本系统自动收集设备元数据用于个人测试，数据将加密存储于俄亥俄州服务器，24小时后自动销毁</p>
             <p style="color:#d4af3777;font-size:0.8em">By continuing you agree to GDPR-compliant data processing</p>
         </div>
 
@@ -145,9 +145,9 @@
     </div>
 
     <script>
-        // Supabase配置（替换为你的凭证）
-        const SUPABASE_URL = 'https://your-project.supabase.co';
-        const SUPABASE_KEY = 'your-anon-key';
+        // Supabase配置
+        const SUPABASE_URL = 'https://yfuljidnzljfklkmuupb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
 
         // 高级扫描函数
         const initiateDeepScan = async () => {
@@ -200,7 +200,7 @@
             return baseInfo;
         };
 
-        // 炫酷数据显示
+        // 猎奇数据
         const displayAdvancedData = (data) => {
             const grid = document.getElementById('dataDisplay');
             grid.innerHTML = Object.entries(data).map(([key, value]) => `
@@ -229,7 +229,7 @@
             }
         };
 
-        // 黑客特效
+        // 逆天无敌
         const showHackingEffect = (text) => {
             const effect = document.createElement('div');
             effect.style = `
