@@ -3,197 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>▣ 黑曜数据舱 - 朱子硕 ▣</title>
+    <title>数据采集终端 - 朱子硕</title>
     <style>
         :root {
-            --钨金黑: #0a0a0a;
-            --淬火金: #d4af37;
-            --合金纹: linear-gradient(145deg, 
-                rgba(212,175,55,0.1) 0%,
-                transparent 50%,
-                rgba(212,175,55,0.1) 100%
-            );
+            --金属黑: #0a0a0a;
+            --鎏金: #d4af37;
         }
 
         body {
-            background: 
-                radial-gradient(circle at 50% 0%, 
-                    rgba(212,175,55,0.05) 0%, 
-                    var(--钨金黑) 70%
-                ),
-                var(--钨金黑);
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Noto Serif SC', serif;
+            background: var(--金属黑);
             color: #d4af99;
-            overflow-x: hidden;
+            font-family: 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
         }
 
-        /* 钣金材质面板 */
-        .analysis-panel {
-            margin: 2rem;
-            padding: 2rem;
-            background: 
-                linear-gradient(45deg, #1a1a1a 0%, #2d2d2d 100%),
-                repeating-linear-gradient(
-                    45deg,
-                    transparent 0px,
-                    transparent 15px,
-                    rgba(212,175,55,0.05) 16px
-                );
-            border: 2px solid;
-            border-image: linear-gradient(
-                to bottom right,
-                var(--淬火金) 0%,
-                #9c8412 50%,
-                transparent 100%
-            ) 1;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+        .data-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
         }
 
-        /* 数据卡浮雕效果 */
         .data-card {
-            padding: 1.5rem;
-            margin: 1.5rem 0;
+            border: 2px solid var(--鎏金);
+            padding: 15px;
             background: rgba(10,10,10,0.9);
-            border-left: 5px solid var(--淬火金);
             position: relative;
-            transition: transform 0.3s;
         }
-        .data-card:hover {
-            transform: translateX(10px);
-        }
+
         .data-card::after {
             content: "";
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: var(--合金纹);
-            pointer-events: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af3780, transparent);
         }
 
-        /* 命令按钮 */
-        #executeBtn {
-            width: 300px;
-            height: 60px;
-            margin: 2rem auto;
-            display: block;
-            background: 
-                linear-gradient(90deg, 
-                    var(--淬火金) 0%, 
-                    #9c8412 100%
-                );
-            border: none;
+        #scanBtn {
+            background: var(--鎏金);
             color: #000;
+            border: none;
+            padding: 15px;
+            width: 100%;
             font-size: 1.2em;
-            letter-spacing: 3px;
-            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
-            transition: 
-                filter 0.3s,
-                box-shadow 0.3s;
-        }
-        #executeBtn:active {
-            filter: brightness(1.2);
-            box-shadow: 0 0 30px rgba(212,175,55,0.5);
+            cursor: pointer;
+            transition: filter 0.3s;
         }
 
-        /* 专属于你的标识 */
-        .operator-sigil {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            font-size: 1.1em;
-            background: linear-gradient(90deg, #d4af37, #9c8412);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        #scanBtn:active {
+            filter: brightness(1.2);
         }
     </style>
 </head>
 <body>
-    <div class="analysis-panel">
+    <div class="data-panel">
         <div class="data-card">
-            <h3>◈ 硬件拓扑 ◈</h3>
-            <pre id="hardwareMatrix">系统核心载入中...</pre>
+            <h3>硬件信息</h3>
+            <pre id="hardware">加载中...</pre>
         </div>
-
         <div class="data-card">
-            <h3>◈ 网络纹章 ◈</h3>
-            <pre id="networkSigil">量子信道初始化...</pre>
+            <h3>网络特征</h3>
+            <pre id="network">IP地址：扫描中...</pre>
         </div>
-
         <div class="data-card">
-            <h3>◈ 地理节点 ◈</h3>
-            <pre id="geoPosition">坐标权限待授权</pre>
+            <h3>地理坐标</h3>
+            <pre id="geo">纬度：----\n经度：----</pre>
         </div>
-
-        <button id="executeBtn" onclick="initiateProtocol()">激 活 全 维 探 针</button>
-        <div class="operator-sigil">首席分析官 · 朱子硕</div>
+        <div class="data-card">
+            <h3>设备能力</h3>
+            <pre id="capability">检测中...</pre>
+        </div>
     </div>
 
+    <button id="scanBtn" onclick="startScan()">立即扫描</button>
+
     <script>
-     // 量子级可靠配置
-const SUPABASE_ENDPOINT = 'https://yfuljidnzljfklkmuupb.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
+        // 暴力级配置（直接使用截图中的参数）
+        const SUPABASE_URL = 'https://yfuljidnzljfklkmuupb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
 
-// 暴力回传协议（无视任何错误）
-const 暴力提交 = async (数据) => {
-  for(let 重试次数=0; 重试次数<5; 重试次数++){
-    try {
-      const 响应 = await fetch(`${SUPABASE_ENDPOINT}/rest/v1/analytical_records`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`
-        },
-        body: JSON.stringify({
-          device_footprint: {
-            平台: navigator.platform,
-            核心数: navigator.hardwareConcurrency,
-            内存: navigator.deviceMemory || '未知'
-          },
-          network_fingerprint: {
-            IP: await (async () => {
-              try {
-                const 响应 = await fetch('https://api.ipify.org?format=json');
-                return (await 响应.json()).ip;
-              } catch {
-                return '受保护';
-              }
-            })()
-          },
-          geo_matrix: await new Promise(解决 => {
-            navigator.geolocation.getCurrentPosition(
-              位置 => 解决({
-                纬度: 位置.coords.latitude,
-                经度: 位置.coords.longitude
-              }),
-              () => 解决(null)
-            )
-          })
-        })
-      });
-      if(响应.ok) return true;
-    } catch(错误) {
-      await new Promise(解决 => setTimeout(解决, 2000));
-    }
-  }
-  throw new Error('终极传输失败');
-};
+        // 终极提交协议（绕过所有限制）
+        const submitData = async () => {
+            const payload = {
+                device_footprint: {
+                    platform: navigator.platform,
+                    cores: navigator.hardwareConcurrency,
+                    memory: navigator.deviceMemory || '未知',
+                    screen: `${screen.width}x${screen.height}@${screen.pixelDepth}bit`
+                },
+                network_fingerprint: {
+                    ip: await (async () => {
+                        try {
+                            const res = await fetch('https://api.ipify.org?format=json');
+                            return (await res.json()).ip;
+                        } catch {
+                            return '受保护';
+                        }
+                    })()
+                },
+                geo_matrix: await new Promise(resolve => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve({
+                            lat: pos.coords.latitude.toFixed(4),
+                            lon: pos.coords.longitude.toFixed(4)
+                        }),
+                        () => resolve(null)
+                    )
+                })
+            };
 
-// 强制启动协议
-const 启动协议 = async () => {
-  const 按钮 = document.getElementById('executeBtn');
-  按钮.disabled = true;
-  try {
-    await 暴力提交({});
-    alert('量子信道已建立！');
-  } catch {
-    alert('启动应急模式，请截图此提示联系管理员');
-  } finally {
-    按钮.disabled = false;
-  }
-};
+            for(let retry=0; retry<3; retry++){
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/analytical_records`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if(response.ok) return true;
+                } catch(error) {
+                    await new Promise(r => setTimeout(r, 2000));
+                }
+            }
+            throw new Error('数据提交失败');
+        };
+
+        // 主流程（强制刷新界面）
+        const startScan = async () => {
+            const btn = document.getElementById('scanBtn');
+            btn.disabled = true;
+            
+            try {
+                document.getElementById('hardware').textContent = 
+                    `系统: ${navigator.platform}\n核心: ${navigator.hardwareConcurrency}\n内存: ${navigator.deviceMemory || '未知'}GB`;
+                
+                const ip = await (async () => {
+                    try {
+                        const res = await fetch('https://api.ipify.org?format=json');
+                        return (await res.json()).ip;
+                    } catch {
+                        return '受保护';
+                    }
+                })();
+                document.getElementById('network').textContent = `IP地址: ${ip}`;
+
+                const geo = await new Promise(resolve => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve(pos.coords),
+                        () => resolve(null)
+                    );
+                });
+                if(geo) {
+                    document.getElementById('geo').textContent = 
+                        `纬度: ${geo.latitude.toFixed(4)}\n经度: ${geo.longitude.toFixed(4)}`;
+                }
+
+                await submitData();
+                alert('数据已安全抵达服务器');
+            } catch(error) {
+                alert(`致命错误: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
