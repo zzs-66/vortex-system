@@ -2,145 +2,195 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>█ 暗物质数据舱 █</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>‖ 神经矩阵扫描终端 ‖</title>
     <style>
         :root {
-            --虚空黑: #0a0a0a;
-            --量子金: #d4af37;
-            --星环纹: linear-gradient(45deg, 
-                transparent 0%, 
-                rgba(212,175,55,0.1) 50%, 
-                transparent 100%
-            );
+            --矩阵绿: #00ff9d;
+            --深渊黑: #001219;
+            --霓虹紫: #bc00dd;
         }
 
         body {
-            background: var(--虚空黑);
-            color: #d4af99;
-            font-family: 'Noto Serif SC', serif;
-            padding: 20px;
+            background: 
+                radial-gradient(circle at 50% 0%, 
+                    rgba(0,255,157,0.1) 0%, 
+                    var(--深渊黑) 80%
+                ),
+                var(--深渊黑);
+            color: var(--矩阵绿);
+            font-family: 'Segment7', monospace;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .quantum-panel {
-            max-width: 1200px;
-            margin: 0 auto;
-            border: 1px solid;
-            border-image: linear-gradient(to right, #d4af3700, #d4af37, #d4af3700) 1;
-            background: rgba(10,10,10,0.95);
+        /* 全息投影效果 */
+        .hologram {
+            position: relative;
+            border: 2px solid var(--矩阵绿);
+            background: rgba(0,18,25,0.9);
+            box-shadow: 0 0 30px rgba(0,255,157,0.2);
+            margin: 2rem;
+            padding: 2rem;
         }
 
-        .data-node {
-            padding: 20px;
-            margin: 20px 0;
-            background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
-            border-left: 4px solid var(--量子金);
+        .hologram::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                transparent 0%, 
+                var(--霓虹紫) 50%, 
+                transparent 100%
+            );
+            z-index: -1;
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
+
+        /* 数据矩阵 */
+        .data-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .neon-card {
+            background: rgba(0,18,25,0.7);
+            border: 1px solid var(--矩阵绿);
+            padding: 1.5rem;
             position: relative;
         }
 
-        #quantumBtn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(90deg, #d4af37, #9c8412);
+        .neon-card:hover {
+            box-shadow: 0 0 20px rgba(0,255,157,0.4);
+        }
+
+        /* 量子按钮 */
+        #quantumTrigger {
+            background: linear-gradient(90deg, var(--矩阵绿), var(--霓虹紫));
             border: none;
+            padding: 1.5rem 3rem;
             color: #000;
             font-size: 1.2em;
             letter-spacing: 3px;
             clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+            margin: 2rem auto;
+            display: block;
         }
     </style>
+    <link href="https://fonts.cdnfonts.com/css/segment7" rel="stylesheet">
 </head>
 <body>
-    <div class="quantum-panel">
-        <div class="data-node">
-            <h3>◈ 量子核心 ◈</h3>
-            <pre id="coreData">架构：加载中...</pre>
-        </div>
-        
-        <div class="data-node">
-            <h3>◈ 超弦信道 ◈</h3>
-            <pre id="networkData">IP地址：█████</pre>
+    <div class="hologram">
+        <div class="data-matrix">
+            <!-- 硬件核心 -->
+            <div class="neon-card">
+                <h3>‖ 量子核心 ‖</h3>
+                <pre id="quantumCore">架构: ██████
+线程: ░░░░░░ 32%
+缓存: 12nm制程</pre>
+            </div>
+
+            <!-- 神经接口 -->
+            <div class="neon-card">
+                <h3>‖ 神经接口 ‖</h3>
+                <pre id="neuralLink">IP: ██:██:██:██
+协议: TLS-QUIC v9
+延迟: <span id="latency">7ms</span></pre>
+            </div>
+
+            <!-- 生化指标 -->
+            <div class="neon-card">
+                <h3>‖ 生化指标 ‖</h3>
+                <pre id="bioMetrics">心率: █ 112bpm
+肾上腺素: 87%
+痛觉阻隔: ████</pre>
+            </div>
         </div>
 
-        <button id="quantumBtn" onclick="activateQuantum()">激 活 量 子 隧 穿</button>
+        <button id="quantumTrigger" onclick="initiateNeuralScan()">激 活 深 度 扫 描</button>
     </div>
 
     <script>
-        // 终极配置（使用你提供的参数）
+        // 超维配置
         const SUPABASE_URL = 'https://ptssgcagifrnlysakbpr.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0c3NnY2FnaWZybmx5c2FrYnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4NDM3NjIsImV4cCI6MjA2MTQxOTc2Mn0.2m7pv1bqhIKlWP0lsybtOK-eLfJCwvIr4CdE7oFViDc';
 
-        // 超维度IP获取
-        const getQuantumIP = async () => {
-            const apis = [
-                'https://api.ipify.org?format=json',
-                'https://api64.ipify.org?format=json',
-                'https://ifconfig.me/all.json'
-            ];
-            
-            for (const api of apis) {
-                try {
-                    const res = await fetch(api);
-                    const data = await res.json();
-                    return data.ip || data.ip_addr;
-                } catch {}
-            }
-            return '█ 量子屏蔽 █';
-        };
-
-        // 设备指纹重构（解决Win32问题）
-        const getDeviceArch = () => {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            return {
-                type: isMobile ? 'Mobile' : 'Desktop',
-                platform: isMobile ? 'MobileOS' : navigator.platform,
-                cores: navigator.hardwareConcurrency
-            };
-        };
-
-        // 黑洞级数据提交
-        const quantumTunnel = async () => {
-            const payload = {
-                device_arch: getDeviceArch(),
-                network_sigil: {
-                    ip: await getQuantumIP()
+        // 赛博数据采集
+        const cyberScan = async () => {
+            const data = {
+                quantumCore: {
+                    architecture: navigator.platform,
+                    threads: navigator.hardwareConcurrency,
+                    cache: '12nm'
+                },
+                neuralLink: {
+                    ip: await fetch('https://api64.ipify.org?format=json')
+                        .then(r => r.json()).then(d => d.ip),
+                    protocol: navigator.connection?.effectiveType,
+                    latency: Math.floor(Math.random() * 20 + 5)
+                },
+                bioMetrics: {
+                    heartRate: Math.floor(Math.random() * 40 + 80),
+                    adrenaline: Math.floor(Math.random() * 30 + 70)
                 }
             };
 
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/vortex_scans`, {
+            // 数据可视化
+            document.getElementById('quantumCore').innerHTML = 
+                `架构: ${data.quantumCore.architecture}\n` +
+                `线程: ${'█'.repeat(data.quantumCore.threads / 2)}\n` +
+                `缓存: ${data.quantumCore.cache}`;
+
+            document.getElementById('neuralLink').innerHTML = 
+                `IP: ${data.neuralLink.ip.replace(/\./g, ':')}\n` +
+                `协议: ${data.neuralLink.protocol}\n` +
+                `延迟: <span id="latency">${data.neuralLink.latency}ms</span>`;
+
+            document.getElementById('bioMetrics').innerHTML = 
+                `心率: █ ${data.bioMetrics.heartRate}bpm\n` +
+                `肾上腺素: ${data.bioMetrics.adrenaline}%\n` +
+                `痛觉阻隔: ${'█'.repeat(4)}`;
+
+            // 数据回传
+            await fetch(`${SUPABASE_URL}/rest/v1/cyber_scans`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'apikey': SUPABASE_KEY,
                     'Authorization': `Bearer ${SUPABASE_KEY}`
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(data)
             });
-            return res.ok;
         };
 
-        // 主协议
-        const activateQuantum = async () => {
-            const btn = document.getElementById('quantumBtn');
-            btn.disabled = true;
-            
-            try {
-                const arch = getDeviceArch();
-                document.getElementById('coreData').textContent = 
-                    `架构：${arch.type}\n平台：${arch.platform}\n核心：${arch.cores}`;
-
-                const ip = await getQuantumIP();
-                document.getElementById('networkData').textContent = `IP地址：${ip}`;
-
-                if (await quantumTunnel()) {
-                    alert('██ 量子共振完成 ██');
-                }
-            } catch {
-                alert('██ 暗物质干扰 ██');
-            } finally {
-                btn.disabled = false;
+        // 动态延迟模拟
+        setInterval(() => {
+            const latency = document.getElementById('latency');
+            if(latency) {
+                latency.textContent = `${Math.floor(Math.random()*15 + 5)}ms`;
             }
+        }, 2000);
+
+        const initiateNeuralScan = async () => {
+            const btn = document.getElementById('quantumTrigger');
+            btn.disabled = true;
+            btn.style.background = 'linear-gradient(90deg, #ff003c, #8a00ff)';
+            
+            await cyberScan();
+            
+            btn.disabled = false;
+            btn.style.background = 'linear-gradient(90deg, var(--矩阵绿), var(--霓虹紫))';
         };
     </script>
 </body>
