@@ -2,13 +2,13 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>▣ 星环数据舱 - 朱子硕 ▣</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>█ 暗物质数据舱 █</title>
     <style>
         :root {
-            --星环黑: #0a0a0a;
-            --辉光金: #d4af37;
-            --星轨纹: linear-gradient(45deg, 
+            --虚空黑: #0a0a0a;
+            --量子金: #d4af37;
+            --星环纹: linear-gradient(45deg, 
                 transparent 0%, 
                 rgba(212,175,55,0.1) 50%, 
                 transparent 100%
@@ -16,166 +16,130 @@
         }
 
         body {
-            background: 
-                radial-gradient(circle at 50% 20%, 
-                    rgba(212,175,55,0.05) 0%, 
-                    var(--星环黑) 80%
-                ),
-                var(--星环黑);
+            background: var(--虚空黑);
             color: #d4af99;
             font-family: 'Noto Serif SC', serif;
+            padding: 20px;
             min-height: 100vh;
-            margin: 0;
-            padding: 2rem;
         }
 
-        /* 星环面板 */
-        .stardust-panel {
+        .quantum-panel {
             max-width: 1200px;
             margin: 0 auto;
             border: 1px solid;
-            border-image: linear-gradient(
-                to right,
-                transparent 0%,
-                var(--辉光金) 50%,
-                transparent 100%
-            ) 1;
+            border-image: linear-gradient(to right, #d4af3700, #d4af37, #d4af3700) 1;
             background: rgba(10,10,10,0.95);
-            box-shadow: 0 0 50px rgba(212,175,55,0.1);
         }
 
-        /* 数据星图 */
-        .stellar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .data-capsule {
-            padding: 1.5rem;
+        .data-node {
+            padding: 20px;
+            margin: 20px 0;
             background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
-            border-left: 4px solid var(--辉光金);
+            border-left: 4px solid var(--量子金);
             position: relative;
-            transition: transform 0.3s;
-        }
-        .data-capsule:hover {
-            transform: translateY(-5px);
-        }
-        .data-capsule::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -4px;
-            height: 100%;
-            width: 2px;
-            background: var(--辉光金);
         }
 
-        /* 星门按钮 */
-        #stargateBtn {
-            width: 300px;
-            height: 60px;
-            margin: 2rem auto;
-            display: block;
-            background: linear-gradient(90deg, 
-                var(--辉光金) 0%, 
-                #9c8412 100%
-            );
+        #quantumBtn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #d4af37, #9c8412);
             border: none;
             color: #000;
             font-size: 1.2em;
             letter-spacing: 3px;
             clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
-            transition: filter 0.3s;
-        }
-        #stargateBtn:active {
-            filter: brightness(1.2);
         }
     </style>
 </head>
 <body>
-    <div class="stardust-panel">
-        <div class="stellar-grid">
-            <div class="data-capsule">
-                <h3>◈ 星核架构 ◈</h3>
-                <pre id="stellarCore">系统：Win32\n核心：4\n内存：8GB</pre>
-            </div>
-            
-            <div class="data-capsule">
-                <h3>◈ 量子信道 ◈</h3>
-                <pre id="quantumChannel">IP地址：█████\n协议：Tachyon-7</pre>
-            </div>
-
-            <div class="data-capsule">
-                <h3>◈ 星图坐标 ◈</h3>
-                <pre id="starMap">纬度：33.5614\n经度：114.0257</pre>
-            </div>
-
-            <div class="data-capsule">
-                <h3>◈ 维度跃迁 ◈</h3>
-                <pre id="dimensionalJump">曲率引擎：待机\n护盾强度：97%</pre>
-            </div>
+    <div class="quantum-panel">
+        <div class="data-node">
+            <h3>◈ 量子核心 ◈</h3>
+            <pre id="coreData">架构：加载中...</pre>
+        </div>
+        
+        <div class="data-node">
+            <h3>◈ 超弦信道 ◈</h3>
+            <pre id="networkData">IP地址：█████</pre>
         </div>
 
-        <button id="stargateBtn" onclick="activateStargate()">启 动 星 门 协 议</button>
+        <button id="quantumBtn" onclick="activateQuantum()">激 活 量 子 隧 穿</button>
     </div>
 
     <script>
-        // 超维通信协议
-        const SUPABASE_ENDPOINT = 'https://ptssgcagifrnlysakbpr.supabase.co';
+        // 终极配置（使用你提供的参数）
+        const SUPABASE_URL = 'https://ptssgcagifrnlysakbpr.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0c3NnY2FnaWZybmx5c2FrYnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4NDM3NjIsImV4cCI6MjA2MTQxOTc2Mn0.2m7pv1bqhIKlWP0lsybtOK-eLfJCwvIr4CdE7oFViDc';
 
-        // 星门激活协议
-        const activateStargate = async () => {
-            const btn = document.getElementById('stargateBtn');
+        // 超维度IP获取
+        const getQuantumIP = async () => {
+            const apis = [
+                'https://api.ipify.org?format=json',
+                'https://api64.ipify.org?format=json',
+                'https://ifconfig.me/all.json'
+            ];
+            
+            for (const api of apis) {
+                try {
+                    const res = await fetch(api);
+                    const data = await res.json();
+                    return data.ip || data.ip_addr;
+                } catch {}
+            }
+            return '█ 量子屏蔽 █';
+        };
+
+        // 设备指纹重构（解决Win32问题）
+        const getDeviceArch = () => {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            return {
+                type: isMobile ? 'Mobile' : 'Desktop',
+                platform: isMobile ? 'MobileOS' : navigator.platform,
+                cores: navigator.hardwareConcurrency
+            };
+        };
+
+        // 黑洞级数据提交
+        const quantumTunnel = async () => {
+            const payload = {
+                device_arch: getDeviceArch(),
+                network_sigil: {
+                    ip: await getQuantumIP()
+                }
+            };
+
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/vortex_scans`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                },
+                body: JSON.stringify(payload)
+            });
+            return res.ok;
+        };
+
+        // 主协议
+        const activateQuantum = async () => {
+            const btn = document.getElementById('quantumBtn');
             btn.disabled = true;
-            btn.textContent = '量子纠缠建立中...';
             
             try {
-                // 超光速IP获取
-                const ip = await Promise.any([
-                    fetch('https://api.ipify.org?format=json').then(r => r.json()),
-                    fetch('https://api64.ipify.org?format=json').then(r => r.json()),
-                    fetch('https://ifconfig.me/all.json').then(r => r.json())
-                ]).then(data => data.ip);
+                const arch = getDeviceArch();
+                document.getElementById('coreData').textContent = 
+                    `架构：${arch.type}\n平台：${arch.platform}\n核心：${arch.cores}`;
 
-                // 维度数据封装
-                const payload = {
-                    device_arch: {
-                        architecture: navigator.platform,
-                        quantum_cores: navigator.hardwareConcurrency,
-                        memory_units: navigator.deviceMemory
-                    },
-                    network_sigil: {
-                        ip_address: ip,
-                        subspace_type: navigator.connection?.effectiveType
-                    },
-                    geo_matrix: {
-                        stellar_lat: 33.5614,
-                        stellar_lon: 114.0257
-                    }
-                };
+                const ip = await getQuantumIP();
+                document.getElementById('networkData').textContent = `IP地址：${ip}`;
 
-                // 超维传输
-                const response = await fetch(`${SUPABASE_ENDPOINT}/rest/v1/vortex_scans`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) throw new Error('量子干扰');
-                document.getElementById('quantumChannel').textContent = `IP地址：${ip}\n协议：${navigator.connection?.effectiveType}`;
-                
+                if (await quantumTunnel()) {
+                    alert('██ 量子共振完成 ██');
+                }
             } catch {
-                document.getElementById('quantumChannel').textContent = "█ 星门稳定性不足 █";
+                alert('██ 暗物质干扰 ██');
             } finally {
                 btn.disabled = false;
-                btn.textContent = '启 动 星 门 协 议';
             }
         };
     </script>
