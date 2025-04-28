@@ -128,8 +128,8 @@
 
     <script>
         // Supabase配置
-        const SUPABASE_端点 = 'https://yfuljidnzljfklkmuupb.supabase.co';
-        const SUPABASE_密钥 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdWxqaWRuemxqZmtsa211dXBiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4MDM5MzEsImV4cCI6MjA2MTM3OTkzMX0.UHoW7xKPOEENYe1PueTrNpeWIumPusgj8FEkxoaQJpo';
+        const SUPABASE_端点 = 'https://ycqfchdeeyrptchzgjgh.supabase.co';
+        const SUPABASE_密钥 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljcWZjaGRlZXlycHRjaHpnamdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4Mzk2MzksImV4cCI6MjA2MTQxNTYzOX0.nf9ZJe_CgKTqQofoITAfK7JXDXf_yglc4_tX1Clp_mY';
 
         // 精密数据采集
         const 获取设备指纹 = async () => {
@@ -176,7 +176,7 @@
                 });
                 显示传输状态('▲ 数据安全通道已建立 ▲');
             } catch (error) {
-                显示传输状态('⚠ 量子信道干扰 - 请重试');
+                显示传输状态('⚠ 信道干扰 - 请重试');
             }
 
             return 指纹数据;
